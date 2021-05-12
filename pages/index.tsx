@@ -1,108 +1,77 @@
 import { useEffect } from "react";
 import dataStore from "../store/dataStore";
 import styled from "styled-components";
+import LineItem, { ListContainer } from "../components/lineItem";
+import Header from "../components/primatives/containers/header";
+import Label from "../components/primatives/form/label";
+import Input from "../components/primatives/form/input";
 
-const ListItem = styled.li`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const Pill = styled.li`
-  background: #e87648;
-  border-radius: 100px;
-  display: flex;
-  padding: 0.5rem 1rem;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  button {
-    margin-left: 1rem;
-  }
-`;
-
-const FlexList = styled.ul`
-  all: unset;
-  padding: 0.5rem;
-  display: flex;
-  gap: 0.5rem;
+const PageContainer = styled.div`
+  max-width: 1024px;
+  margin: 0 auto;
 `;
 
 const Index = () => {
-  const { items, getData, tags, addTag, removeTag, getTagsFromLocalStore } =
-    dataStore((state) => ({
-      items: state.items,
-      getData: state.getData,
-      addTag: state.addTag,
-      removeTag: state.removeTag,
-      tags: state.tags,
-      getTagsFromLocalStore: state.getTagsFromLocalStore,
-    }));
+  const {
+    items,
+    getData,
+    tags,
+    addTag,
+    removeTag,
+    filterItems,
+    getTagsFromLocalStore,
+    filteredItems,
+  } = dataStore((state) => ({
+    items: state.items,
+    getData: state.getData,
+    addTag: state.addTag,
+    removeTag: state.removeTag,
+    tags: state.tags,
+    filterItems: state.filterItems,
+    filteredItems: state.filteredItems,
+    getTagsFromLocalStore: state.getTagsFromLocalStore,
+  }));
 
   useEffect(() => {
     getTagsFromLocalStore();
     (async () => await getData())();
   }, []);
 
+  const addTagSubmission = (e: any) => {
+    e.preventDefault();
+    if (parseInt(e.target["max-tag"].value) <= 4) {
+      addTag(e.target.id.value, e.target.tag.value);
+    } else {
+      alert("max tags per items is 5");
+    }
+  };
+
+  const removeTagSubmission = (e: any) => {
+    e.preventDefault();
+    removeTag(e.target.id.value, e.target.tag.value);
+  };
+
+  const queryIems = (e: React.ChangeEvent<HTMLInputElement>) => {
+    filterItems(e.target.value);
+  };
+
   return (
-    <>
-      <input />
-      {items.map((item) => (
-        <ListItem>
-          <section>
-            <h2>{item.name}</h2>
-            <span>{item.created_at}</span>
-          </section>
-          <section
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              flexDirection: "column",
-            }}
-          >
-            <form
-              onSubmit={(e: any) => {
-                e.preventDefault();
-                console.log(parseInt(e.target["max-tag"].value));
-                if (parseInt(e.target["max-tag"].value) <= 4) {
-                  addTag(e.target.id.value, e.target.tag.value);
-                } else {
-                  alert("max tags per items is 5");
-                }
-              }}
-            >
-              <input type="hidden" name="id" value={item.id} />
-              <input
-                type="hidden"
-                name="max-tag"
-                value={(tags?.[item.id] || []).length}
-              />
-              <input name="tag" placeholder="add tag" required />
-              <button type="submit">add tag</button>
-            </form>
-            <FlexList>
-              {(tags?.[item.id] || []).map((tag, index) => (
-                <Pill>
-                  <span></span>
-                  {tag}{" "}
-                  <form
-                    onSubmit={(e: any) => {
-                      e.preventDefault();
-                      removeTag(e.target.id.value, e.target.tag.value);
-                    }}
-                  >
-                    <input type="hidden" name="id" value={item.id} />
-                    <input type="hidden" name="tag" value={tag} />
-                    <button type="submit">x</button>
-                  </form>
-                </Pill>
-              ))}
-            </FlexList>
-          </section>
-        </ListItem>
-      ))}
-    </>
+    <PageContainer>
+      <Header>
+        <Label addTags="searchTags">Search Tags</Label>
+        <Input id="searchTags" onChange={queryIems} placeholder="search tags" />
+      </Header>
+      <ListContainer>
+        {(filteredItems.length === 0 ? items : filteredItems).map((item) => (
+          <LineItem
+            item={item}
+            tags={tags}
+            removeTagSubmission={removeTagSubmission}
+            addTagSubmission={addTagSubmission}
+          />
+        ))}
+      </ListContainer>
+    </PageContainer>
   );
 };
 
