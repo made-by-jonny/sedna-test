@@ -82,6 +82,7 @@ const dataStore = create<ItemStore>((set, get) => ({
     } catch (e) {
       set({
         items: [],
+        isLoading: false,
       });
     }
   },

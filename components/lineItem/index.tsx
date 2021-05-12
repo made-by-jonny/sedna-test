@@ -74,6 +74,7 @@ const LineItem: React.FC<LineItem> = (props) => {
         <Row>
           {(tags?.[item.id] || []).map((tag: string, index: number) => (
             <Pill
+              key={index}
               removeTagSubmission={removeTagSubmission}
               tag={tag}
               index={index}

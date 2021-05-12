@@ -29,6 +29,10 @@ const GlobalStyle = createGlobalStyle`
     line-height: 130%;
     text-transform: capitalize;
   }
+
+  h2.error {
+    text-align:center;
+  }
   
 `;
 

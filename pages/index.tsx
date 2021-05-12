@@ -21,8 +21,10 @@ const Index = () => {
     filterItems,
     getTagsFromLocalStore,
     filteredItems,
+    isLoading,
   } = dataStore((state) => ({
     items: state.items,
+    isLoading: state.isLoading,
     getData: state.getData,
     addTag: state.addTag,
     removeTag: state.removeTag,
@@ -61,9 +63,13 @@ const Index = () => {
         <Label addTags="searchTags">Search Tags</Label>
         <Input id="searchTags" onChange={queryIems} placeholder="search tags" />
       </Header>
+      {!isLoading && items.length === 0 ? (
+        <h2 className="error">There was a problem loading data from the api</h2>
+      ) : null}
       <ListContainer>
         {(filteredItems.length === 0 ? items : filteredItems).map((item) => (
           <LineItem
+            key={item.name}
             item={item}
             tags={tags}
             removeTagSubmission={removeTagSubmission}
