@@ -69,7 +69,7 @@ const Index = () => {
       <ListContainer>
         {(filteredItems.length === 0 ? items : filteredItems).map((item) => (
           <LineItem
-            key={item.name}
+            key={item.id}
             item={item}
             tags={tags}
             removeTagSubmission={removeTagSubmission}

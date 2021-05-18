@@ -67,8 +67,13 @@ const LineItem: React.FC<LineItem> = (props) => {
             name="max-tag"
             value={(tags?.[item.id] || []).length}
           />
-          <Label htmlFor="addTags">add Tags</Label>
-          <Input id="addTags" name="tag" placeholder="add tag" required />
+          <Label htmlFor={`addTags_${item.id}`}>add Tags</Label>
+          <Input
+            id={`addTags_${item.id}`}
+            name="tag"
+            placeholder="add tag"
+            required
+          />
           <Button type="submit">add tag</Button>
         </form>
         <Row>
